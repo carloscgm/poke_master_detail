@@ -27,7 +27,15 @@ class PokemonDataImpl implements PokemonRepository {
 
   @override
   Future<Pokemon> getPokemonById(int id) async {
-    return await _remoteImpl.getPokemonById(id);
+    final cachedPokemon = _cacheImpl.getCachedPokemon(id);
+
+    if (cachedPokemon != null) {
+      return cachedPokemon;
+    } else {
+      final pokemon = await _remoteImpl.getPokemonById(id);
+      _cacheImpl.addCachedPokemon(id, pokemon);
+      return pokemon;
+    }
   }
 
   @override

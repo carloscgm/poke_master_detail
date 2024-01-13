@@ -1,13 +1,23 @@
 import 'package:poke_master_detail/data/cache/database_tables.dart';
 import 'package:poke_master_detail/data/cache/error/cache_error_mapper.dart';
+import 'package:poke_master_detail/data/cache/memory_cache.dart';
 import 'package:poke_master_detail/data/cache/pokemon_database_helper.dart';
 import 'package:poke_master_detail/model/pokemon.dart';
 import 'dart:convert';
 
 class PokemonCacheImpl {
   final PokemonDatabaseHelper _pokemonDatabaseHelper;
+  final MemoryCache _memoryCache;
 
-  PokemonCacheImpl(this._pokemonDatabaseHelper);
+  PokemonCacheImpl(this._pokemonDatabaseHelper, this._memoryCache);
+
+  Pokemon? getCachedPokemon(int id) {
+    return _memoryCache.pokemonList[id];
+  }
+
+  void addCachedPokemon(int id, Pokemon pokemon) {
+    _memoryCache.pokemonList[id] = pokemon;
+  }
 
   Future<List<Pokemon>> getFavoritePokemons() async {
     try {

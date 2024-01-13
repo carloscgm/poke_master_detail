@@ -4,7 +4,7 @@ import 'package:poke_master_detail/model/pokemon_list.dart';
 import 'package:poke_master_detail/presentation/common/base/resource_state.dart';
 import 'package:poke_master_detail/presentation/common/localization/app_localizations.dart';
 import 'package:poke_master_detail/presentation/common/widget/pokemon/empty_grid_card.dart';
-import 'package:poke_master_detail/presentation/common/widget/pokemon/grid_card.dart';
+import 'package:poke_master_detail/presentation/common/widget/pokemon/pokedex_grid_card.dart';
 import 'package:poke_master_detail/presentation/common/widget/error/error_overlay.dart';
 import 'package:poke_master_detail/presentation/common/widget/loading/loading_overlay.dart';
 import 'package:poke_master_detail/presentation/navigation/navigation_routes.dart';
@@ -42,10 +42,14 @@ class _PokemonListPageState extends State<PokemonListPage>
     _pokemonViewModel.pokemonListState.stream.listen((state) {
       switch (state.status) {
         case Status.LOADING:
-          LoadingOverlay.show(context);
+          if (initLoading) {
+            LoadingOverlay.show(context);
+          }
           break;
         case Status.COMPLETED:
-          LoadingOverlay.hide();
+          if (initLoading) {
+            LoadingOverlay.hide();
+          }
           setState(() {
             loadingNext = false;
             initLoading = false;
@@ -106,7 +110,7 @@ class _PokemonListPageState extends State<PokemonListPage>
         if (index == pokemonList.results.length) {
           return const Center(child: CircularProgressIndicator());
         } else {
-          return GridCard(
+          return PokedexGridCard(
               pokemon: pokemonList.results[index],
               index: index + 1,
               route: NavigationRoutes.pokemonDetailRoute);

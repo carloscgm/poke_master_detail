@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:poke_master_detail/model/pokemon_list.dart';
 
-class GridCard extends StatelessWidget {
+class PokedexGridCard extends StatelessWidget {
   final Result pokemon;
   final int index;
   final String route;
 
-  const GridCard(
+  const PokedexGridCard(
       {super.key,
       required this.pokemon,
       required this.route,
@@ -35,7 +35,7 @@ class GridCard extends StatelessWidget {
           children: [
             Hero(
               transitionOnUserGestures: true,
-              tag: pokemon.url,
+              tag: pokemon.name,
               child: Image(
                   image: CachedNetworkImageProvider(
                 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$index.png',

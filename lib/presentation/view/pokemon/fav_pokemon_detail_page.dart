@@ -13,20 +13,19 @@ import 'package:poke_master_detail/presentation/navigation/navigation_routes.dar
 import 'package:poke_master_detail/presentation/view/pokemon/viewmodel/pokemon_view_model.dart';
 //import 'package:share_plus/share_plus.dart';
 
-class PokemonDetailPage extends StatefulWidget {
-  final int index;
+class FavPokemonDetailPage extends StatefulWidget {
+  final Pokemon pokemon;
 
-  const PokemonDetailPage({Key? key, required this.index}) : super(key: key);
+  const FavPokemonDetailPage({Key? key, required this.pokemon})
+      : super(key: key);
 
   @override
-  State<PokemonDetailPage> createState() => _PokemonDetailPageState();
+  State<FavPokemonDetailPage> createState() => _FavPokemonDetailPageState();
 }
 
-class _PokemonDetailPageState extends State<PokemonDetailPage> {
+class _FavPokemonDetailPageState extends State<FavPokemonDetailPage> {
   final _pokemonViewModel = inject<PokemonViewModel>();
   bool isFavorite = false;
-  late Pokemon pokemon;
-  bool loading = true;
 
   @override
   void initState() {
@@ -40,7 +39,6 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         case Status.COMPLETED:
           LoadingOverlay.hide();
           setState(() {
-            loading = false;
             isFavorite = event.data;
           });
           break;
@@ -53,60 +51,33 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
           break;
       }
     });
-
-    _pokemonViewModel.detailPokemonState.stream.listen((event) {
-      switch (event.status) {
-        case Status.LOADING:
-          LoadingOverlay.show(context);
-          break;
-        case Status.COMPLETED:
-          //LoadingOverlay.hide();
-          setState(() {
-            pokemon = event.data;
-            _pokemonViewModel.isFavoritePokemons(pokemon);
-          });
-          break;
-        case Status.ERROR:
-          LoadingOverlay.hide();
-          ErrorOverlay.of(context).show(event.error, onRetry: () {});
-          break;
-        default:
-          LoadingOverlay.hide();
-          break;
-      }
-    });
-    _pokemonViewModel.getPokemonById(widget.index);
   }
 
   @override
   Widget build(BuildContext context) {
-    return loading
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Scaffold(
-            appBar: AppBar(
-              backgroundColor: _getColorType(),
-              title: Text(pokemon.name.toUpperCase()),
-            ),
-            body: _body(),
-            floatingActionButton: FloatingActionButton.extended(
-                onPressed: () {
-                  if (isFavorite) {
-                    _pokemonViewModel.removeFavoritePokemons(pokemon);
-                  } else {
-                    _pokemonViewModel.addFavoritePokemons(pokemon);
-                  }
-                  isFavorite = !isFavorite;
-                  setState(() {});
-                },
-                label: isFavorite
-                    ? const Icon(
-                        Icons.favorite,
-                        color: Colors.red,
-                      )
-                    : const Icon(Icons.favorite_outline)),
-          );
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: _getColorType(),
+        title: Text(widget.pokemon.name.toUpperCase()),
+      ),
+      body: _body(),
+      floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            if (isFavorite) {
+              _pokemonViewModel.removeFavoritePokemons(widget.pokemon);
+            } else {
+              _pokemonViewModel.addFavoritePokemons(widget.pokemon);
+            }
+            isFavorite = !isFavorite;
+            setState(() {});
+          },
+          label: isFavorite
+              ? const Icon(
+                  Icons.favorite,
+                  color: Colors.red,
+                )
+              : const Icon(Icons.favorite_outline)),
+    );
   }
 
   Widget _body() {
@@ -142,13 +113,13 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     return Row(
       children: [
         Hero(
-          tag: pokemon.name,
+          tag: widget.pokemon.name,
           child: SizedBox(
             height: responsive.width / 2.3,
             width: responsive.width / 2.3,
             child: Image(
               image: CachedNetworkImageProvider(
-                'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${widget.index}.png',
+                widget.pokemon.sprites.frontDefault,
               ),
               fit: BoxFit.contain,
             ),
@@ -166,7 +137,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   Widget moves() {
     return GestureDetector(
       onTap: (() => context.push(NavigationRoutes.movesPokemonDetailRoute,
-          extra: pokemon.toJson())),
+          extra: widget.pokemon.toJson())),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -209,20 +180,20 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${AppLocalizations.of(context)!.height} ${pokemon.height}',
+            '${AppLocalizations.of(context)!.height} ${widget.pokemon.height}',
             style: AppStyles.appTheme.textTheme.bodyMedium,
           ),
           Text(
-            '${AppLocalizations.of(context)!.weight} ${pokemon.weight}',
+            '${AppLocalizations.of(context)!.weight} ${widget.pokemon.weight}',
             style: AppStyles.appTheme.textTheme.bodyMedium,
           ),
           Text(
-            '${AppLocalizations.of(context)!.main_type} ${pokemon.types.first.type.name}',
+            '${AppLocalizations.of(context)!.main_type} ${widget.pokemon.types.first.type.name}',
             style: AppStyles.appTheme.textTheme.bodyMedium,
           ),
-          pokemon.types.length == 2
+          widget.pokemon.types.length == 2
               ? Text(
-                  '${AppLocalizations.of(context)!.sec_type} ${pokemon.types[1].type.name}',
+                  '${AppLocalizations.of(context)!.sec_type} ${widget.pokemon.types[1].type.name}',
                   style: AppStyles.appTheme.textTheme.bodyMedium,
                 )
               : Container(),
@@ -266,7 +237,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: pokemon.abilities.length,
+      itemCount: widget.pokemon.abilities.length,
       itemBuilder: (context, index) {
         return _abilityElement(index);
       },
@@ -275,7 +246,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 
   Widget _abilityElement(int index) {
     return ListTile(
-      title: Text(pokemon.abilities[index].ability.name.toUpperCase()),
+      title: Text(widget.pokemon.abilities[index].ability.name.toUpperCase()),
       onTap: () {},
     );
   }
@@ -302,28 +273,28 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     String url = '';
     switch (index) {
       case 0:
-        url = pokemon.sprites.frontDefault;
+        url = widget.pokemon.sprites.frontDefault;
         break;
       case 1:
-        url = pokemon.sprites.backDefault;
+        url = widget.pokemon.sprites.backDefault;
         break;
       case 2:
-        url = pokemon.sprites.frontFemale ?? '';
+        url = widget.pokemon.sprites.frontFemale ?? '';
         break;
       case 3:
-        url = pokemon.sprites.backFemale ?? '';
+        url = widget.pokemon.sprites.backFemale ?? '';
         break;
       case 4:
-        url = pokemon.sprites.frontShiny;
+        url = widget.pokemon.sprites.frontShiny;
         break;
       case 5:
-        url = pokemon.sprites.backShiny;
+        url = widget.pokemon.sprites.backShiny;
         break;
       case 6:
-        url = pokemon.sprites.frontShinyFemale ?? '';
+        url = widget.pokemon.sprites.frontShinyFemale ?? '';
         break;
       case 7:
-        url = pokemon.sprites.backShinyFemale ?? '';
+        url = widget.pokemon.sprites.backShinyFemale ?? '';
         break;
     }
 
@@ -352,17 +323,17 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       child: Column(
         children: [
           Text(
-            pokemon.stats[index].stat.name.toUpperCase(),
+            widget.pokemon.stats[index].stat.name.toUpperCase(),
             textAlign: TextAlign.center,
           ),
-          Text('${pokemon.stats[index].baseStat}'),
+          Text('${widget.pokemon.stats[index].baseStat}'),
         ],
       ),
     );
   }
 
   Color _getColorType() {
-    switch (pokemon.types.first.type.name) {
+    switch (widget.pokemon.types.first.type.name) {
       case "normal":
         return AppColors.normalColor.withOpacity(0.3);
       case "fighting":

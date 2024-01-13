@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:poke_master_detail/di/app_modules.dart';
 import 'package:poke_master_detail/model/pokemon.dart';
-import 'package:poke_master_detail/model/pokemon_list.dart';
 import 'package:poke_master_detail/presentation/common/base/resource_state.dart';
 import 'package:poke_master_detail/presentation/common/localization/app_localizations.dart';
-import 'package:poke_master_detail/presentation/common/widget/pokemon/grid_card.dart';
+import 'package:poke_master_detail/presentation/common/widget/pokemon/fav_grid_card.dart';
 import 'package:poke_master_detail/presentation/common/widget/error/error_overlay.dart';
 import 'package:poke_master_detail/presentation/common/widget/loading/loading_overlay.dart';
 import 'package:poke_master_detail/presentation/navigation/navigation_routes.dart';
@@ -72,12 +71,8 @@ class _FavPokemonListPageState extends State<FavPokemonListPage>
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3, crossAxisSpacing: 8, mainAxisSpacing: 8),
       itemBuilder: (context, index) {
-        return GridCard(
-            pokemon: Result(
-                url:
-                    'https://pokeapi.co/api/v2/pokemon/${_pokemonList[index].gameIndices[3]}',
-                name: _pokemonList[index].name),
-            index: index + 1,
+        return FavGridCard(
+            pokemon: _pokemonList[index],
             route: NavigationRoutes.favoritePokemonDetailRoute);
       },
     );

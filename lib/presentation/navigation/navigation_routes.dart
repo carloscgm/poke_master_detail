@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:poke_master_detail/model/pokemon.dart';
 import 'package:poke_master_detail/presentation/view/about/about_page.dart';
 import 'package:poke_master_detail/presentation/view/home/home_page.dart';
+import 'package:poke_master_detail/presentation/view/pokemon/fav_pokemon_detail_page.dart';
 import 'package:poke_master_detail/presentation/view/pokemon/favorite_pokemon_list_page.dart';
 import 'package:poke_master_detail/presentation/view/pokemon/moves_pokemon_list_page.dart';
 import 'package:poke_master_detail/presentation/view/pokemon/pokemon_detail_page.dart';
@@ -89,8 +90,8 @@ final router = GoRouter(
                   GoRoute(
                       path: NavigationRoutes._favPokemonDetailPath,
                       builder: (context, state) {
-                        final extra = state.extra as int;
-                        return PokemonDetailPage(index: extra);
+                        final extra = state.extra as Pokemon;
+                        return FavPokemonDetailPage(pokemon: extra);
                       },
                       routes: [
                         GoRoute(
