@@ -4,12 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:poke_master_detail/di/app_modules.dart';
 import 'package:poke_master_detail/model/pokemon.dart';
 import 'package:poke_master_detail/presentation/common/base/resource_state.dart';
+import 'package:poke_master_detail/presentation/common/extensions/state_extensions.dart';
 import 'package:poke_master_detail/presentation/common/localization/app_localizations.dart';
 import 'package:poke_master_detail/presentation/common/resources/app_colors.dart';
 import 'package:poke_master_detail/presentation/common/resources/app_styles.dart';
 import 'package:poke_master_detail/presentation/common/widget/error/error_overlay.dart';
 import 'package:poke_master_detail/presentation/common/widget/loading/loading_overlay.dart';
 import 'package:poke_master_detail/presentation/navigation/navigation_routes.dart';
+import 'package:poke_master_detail/presentation/view/pokemon/provider/fav_pokemon_provider.dart';
 import 'package:poke_master_detail/presentation/view/pokemon/viewmodel/pokemon_view_model.dart';
 //import 'package:share_plus/share_plus.dart';
 
@@ -25,6 +27,7 @@ class FavPokemonDetailPage extends StatefulWidget {
 
 class _FavPokemonDetailPageState extends State<FavPokemonDetailPage> {
   final _pokemonViewModel = inject<PokemonViewModel>();
+  final _favPokemonProvider = inject<FavPokemonProvider>();
   bool isFavorite = false;
 
   @override
@@ -51,6 +54,12 @@ class _FavPokemonDetailPageState extends State<FavPokemonDetailPage> {
           break;
       }
     });
+
+    listenToProvider(_favPokemonProvider, () {
+      _pokemonViewModel.isFavoritePokemons(widget.pokemon);
+    });
+
+    _pokemonViewModel.isFavoritePokemons(widget.pokemon);
   }
 
   @override

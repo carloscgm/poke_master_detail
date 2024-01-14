@@ -5,6 +5,7 @@ import 'package:poke_master_detail/data/pokemon/pokemon_data_impl.dart';
 import 'package:poke_master_detail/data/pokemon/remote/pokemon_remote_impl.dart';
 import 'package:poke_master_detail/data/remote/http_client.dart';
 import 'package:poke_master_detail/domain/pokemon_repository.dart';
+import 'package:poke_master_detail/presentation/view/pokemon/provider/fav_pokemon_provider.dart';
 import 'package:poke_master_detail/presentation/view/pokemon/viewmodel/pokemon_view_model.dart';
 import 'package:get_it/get_it.dart';
 
@@ -23,10 +24,11 @@ class AppModules {
   }
 
   _setupPokemonModule() {
+    inject.registerSingleton(FavPokemonProvider());
     inject.registerFactory(() => PokemonRemoteImpl(inject.get()));
     inject.registerFactory(() => PokemonCacheImpl(inject.get(), inject.get()));
     inject.registerFactory<PokemonRepository>(
         () => PokemonDataImpl(inject.get(), inject.get()));
-    inject.registerFactory(() => PokemonViewModel(inject.get()));
+    inject.registerFactory(() => PokemonViewModel(inject.get(), inject.get()));
   }
 }

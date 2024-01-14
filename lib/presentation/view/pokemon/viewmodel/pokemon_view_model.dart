@@ -5,12 +5,14 @@ import 'package:poke_master_detail/model/pokemon.dart';
 import 'package:poke_master_detail/presentation/common/base/base_view_model.dart';
 import 'package:poke_master_detail/presentation/common/base/resource_state.dart';
 import 'package:poke_master_detail/presentation/common/errorhandling/app_action.dart';
+import 'package:poke_master_detail/presentation/view/pokemon/provider/fav_pokemon_provider.dart';
 import 'package:poke_master_detail/presentation/view/pokemon/viewmodel/pokemon_error_builder.dart';
 
 class PokemonViewModel extends BaseViewModel {
   final PokemonRepository _pokemonRepository;
+  final FavPokemonProvider _favoritePokemonProvider;
 
-  PokemonViewModel(this._pokemonRepository);
+  PokemonViewModel(this._pokemonRepository, this._favoritePokemonProvider);
 
   StreamController<ResourceState> pokemonListState =
       StreamController<ResourceState>();
@@ -91,19 +93,10 @@ class PokemonViewModel extends BaseViewModel {
 
   Future<void> addFavoritePokemons(Pokemon pokemon) async {
     pokemonFavoriteListState.add(ResourceState.loading());
-    addFavoritePokemonState.add(ResourceState.loading());
 
     _pokemonRepository.addFavoritePokemon(pokemon).then((value) {
-      addFavoritePokemonState.add(ResourceState.completed(value));
-      _pokemonRepository
-          .getFavoritePokemons()
-          .then((value) =>
-              pokemonFavoriteListState.add(ResourceState.completed(value)))
-          .catchError((e) {
-        pokemonFavoriteListState.add(ResourceState.error(
-            PokemonErrorBuilder.create(e, AppAction.GET_FAVORITE_POKEMON)
-                .build()));
-      });
+      pokemonFavoriteListState.add(ResourceState.completed(value));
+      _favoritePokemonProvider.onFavoriteListUpdated();
     }).catchError((e) {
       addFavoritePokemonState.add(ResourceState.error(
           PokemonErrorBuilder.create(e, AppAction.ADD_FAVORITE_POKEMON)
@@ -113,19 +106,10 @@ class PokemonViewModel extends BaseViewModel {
 
   Future<void> removeFavoritePokemons(Pokemon pokemon) async {
     removeFavoritePokemonState.add(ResourceState.loading());
-    pokemonFavoriteListState.add(ResourceState.loading());
 
     _pokemonRepository.removeFavoritePokemon(pokemon).then((value) {
       removeFavoritePokemonState.add(ResourceState.completed(value));
-      _pokemonRepository
-          .getFavoritePokemons()
-          .then((value) =>
-              pokemonFavoriteListState.add(ResourceState.completed(value)))
-          .catchError((e) {
-        pokemonFavoriteListState.add(ResourceState.error(
-            PokemonErrorBuilder.create(e, AppAction.GET_FAVORITE_POKEMON)
-                .build()));
-      });
+      _favoritePokemonProvider.onFavoriteListUpdated();
     }).catchError((e) {
       removeFavoritePokemonState.add(ResourceState.error(
           PokemonErrorBuilder.create(e, AppAction.REMOVE_FAVORITE_POKEMON)
@@ -140,5 +124,6 @@ class PokemonViewModel extends BaseViewModel {
     isFavoritePokemonState.close();
     addFavoritePokemonState.close();
     removeFavoritePokemonState.close();
+    detailPokemonState.close();
   }
 }

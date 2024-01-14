@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final pokemon = pokemonFromJson(jsonString);
+
 import 'dart:convert';
 
 Pokemon pokemonFromJson(String str) => Pokemon.fromJson(json.decode(str));
@@ -10,7 +14,7 @@ class Pokemon {
   final List<Species> forms;
   final List<GameIndex> gameIndices;
   final int height;
-  final List<dynamic> heldItems;
+  final List<HeldItem> heldItems;
   final int id;
   final bool isDefault;
   final String locationAreaEncounters;
@@ -56,7 +60,8 @@ class Pokemon {
         gameIndices: List<GameIndex>.from(
             json["game_indices"].map((x) => GameIndex.fromJson(x))),
         height: json["height"],
-        heldItems: List<dynamic>.from(json["held_items"].map((x) => x)),
+        heldItems: List<HeldItem>.from(
+            json["held_items"].map((x) => HeldItem.fromJson(x))),
         id: json["id"],
         isDefault: json["is_default"],
         locationAreaEncounters: json["location_area_encounters"],
@@ -78,7 +83,7 @@ class Pokemon {
         "forms": List<dynamic>.from(forms.map((x) => x.toJson())),
         "game_indices": List<dynamic>.from(gameIndices.map((x) => x.toJson())),
         "height": height,
-        "held_items": List<dynamic>.from(heldItems.map((x) => x)),
+        "held_items": List<dynamic>.from(heldItems.map((x) => x.toJson())),
         "id": id,
         "is_default": isDefault,
         "location_area_encounters": locationAreaEncounters,
@@ -155,6 +160,48 @@ class GameIndex {
 
   Map<String, dynamic> toJson() => {
         "game_index": gameIndex,
+        "version": version.toJson(),
+      };
+}
+
+class HeldItem {
+  final Species item;
+  final List<VersionDetail> versionDetails;
+
+  HeldItem({
+    required this.item,
+    required this.versionDetails,
+  });
+
+  factory HeldItem.fromJson(Map<String, dynamic> json) => HeldItem(
+        item: Species.fromJson(json["item"]),
+        versionDetails: List<VersionDetail>.from(
+            json["version_details"].map((x) => VersionDetail.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "item": item.toJson(),
+        "version_details":
+            List<dynamic>.from(versionDetails.map((x) => x.toJson())),
+      };
+}
+
+class VersionDetail {
+  final int rarity;
+  final Species version;
+
+  VersionDetail({
+    required this.rarity,
+    required this.version,
+  });
+
+  factory VersionDetail.fromJson(Map<String, dynamic> json) => VersionDetail(
+        rarity: json["rarity"],
+        version: Species.fromJson(json["version"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "rarity": rarity,
         "version": version.toJson(),
       };
 }
@@ -402,12 +449,12 @@ class GenerationI {
 }
 
 class RedBlue {
-  final String backDefault;
-  final String backGray;
-  final String backTransparent;
-  final String frontDefault;
-  final String frontGray;
-  final String frontTransparent;
+  final dynamic backDefault;
+  final dynamic backGray;
+  final dynamic backTransparent;
+  final dynamic frontDefault;
+  final dynamic frontGray;
+  final dynamic frontTransparent;
 
   RedBlue({
     required this.backDefault,
@@ -506,10 +553,10 @@ class Crystal {
 }
 
 class Gold {
-  final String backDefault;
-  final String backShiny;
-  final String frontDefault;
-  final String frontShiny;
+  final String? backDefault;
+  final String? backShiny;
+  final String? frontDefault;
+  final String? frontShiny;
   final String? frontTransparent;
 
   Gold({
