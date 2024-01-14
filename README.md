@@ -1,16 +1,20 @@
 # poke_master_detail
 
-A new Flutter project.
+Example pokemon app with MVVM pattern 
 
-## Getting Started
+## Some points to note
 
-This project is a starting point for a Flutter application.
+- MVVM Pattern with injecting dependencies.
+- Memory cache in network calls.
+- GoRouter.
+- Locations.
+- Light and Dark Mode.
+- Local DDBB with sqlite (favorite pokemon).
+- Dio interceptor.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## API Information
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The app uses the PokeAPI as its data source to retrieve information about various Pokémon. You can find more information about the API at the following link:
+
+[PokeAPI Documentation](https://pokeapi.co/docs/v2)
