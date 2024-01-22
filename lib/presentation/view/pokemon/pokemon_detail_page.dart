@@ -281,7 +281,10 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 
   Widget _abilityElement(int index) {
     return ListTile(
-      title: Text(pokemon.abilities[index].ability.name.toUpperCase()),
+      title: Text(
+        pokemon.abilities[index].ability.name.toUpperCase(),
+        style: const TextStyle(color: Colors.black),
+      ),
       onTap: () {},
     );
   }
