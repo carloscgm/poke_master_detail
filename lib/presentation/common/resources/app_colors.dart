@@ -25,4 +25,50 @@ class AppColors {
   static const Color fairyColor = Color(0xFFFAD02E);
   static const Color unknownColor = Color(0xFFD2B4DE);
   static const Color shadowColor = Color(0xFF5D6D7E);
+
+  static Color getColorType(String type) {
+    switch (type) {
+      case "normal":
+        return AppColors.normalColor.withOpacity(0.3);
+      case "fighting":
+        return AppColors.fightingColor.withOpacity(0.3);
+      case "flying":
+        return AppColors.flyingColor.withOpacity(0.3);
+      case "poison":
+        return AppColors.poisonColor.withOpacity(0.3);
+      case "ground":
+        return AppColors.groundColor.withOpacity(0.3);
+      case "rock":
+        return AppColors.rockColor.withOpacity(0.3);
+      case "bug":
+        return AppColors.bugColor.withOpacity(0.3);
+      case "ghost":
+        return AppColors.ghostColor.withOpacity(0.3);
+      case "steel":
+        return AppColors.steelColor.withOpacity(0.3);
+      case "fire":
+        return AppColors.fireColor.withOpacity(0.3);
+      case "water":
+        return AppColors.waterColor.withOpacity(0.3);
+      case "grass":
+        return AppColors.grassColor.withOpacity(0.3);
+      case "electric":
+        return AppColors.electricColor.withOpacity(0.3);
+      case "psychic":
+        return AppColors.psychicColor.withOpacity(0.3);
+      case "ice":
+        return AppColors.iceColor.withOpacity(0.3);
+      case "dragon":
+        return AppColors.dragonColor.withOpacity(0.3);
+      case "dark":
+        return AppColors.darkColor.withOpacity(0.3);
+      case "fairy":
+        return AppColors.fairyColor.withOpacity(0.3);
+      case "unknown":
+        return AppColors.unknownColor.withOpacity(0.3);
+      case "shadow":
+        return AppColors.shadowColor.withOpacity(0.3);
+    }
+    return AppColors.unknownColor.withOpacity(0.3);
+  }
 }

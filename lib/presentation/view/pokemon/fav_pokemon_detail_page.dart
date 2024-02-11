@@ -10,6 +10,8 @@ import 'package:poke_master_detail/presentation/common/resources/app_colors.dart
 import 'package:poke_master_detail/presentation/common/resources/app_styles.dart';
 import 'package:poke_master_detail/presentation/common/widget/error/error_overlay.dart';
 import 'package:poke_master_detail/presentation/common/widget/loading/loading_overlay.dart';
+import 'package:poke_master_detail/presentation/common/widget/pokemon/custom_background.dart';
+import 'package:poke_master_detail/presentation/common/widget/pokemon/panel.dart';
 import 'package:poke_master_detail/presentation/navigation/navigation_routes.dart';
 import 'package:poke_master_detail/presentation/view/pokemon/provider/fav_pokemon_provider.dart';
 import 'package:poke_master_detail/presentation/view/pokemon/viewmodel/pokemon_view_model.dart';
@@ -64,36 +66,39 @@ class _FavPokemonDetailPageState extends State<FavPokemonDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: _getColorType(),
-        title: Text(widget.pokemon.name.toUpperCase()),
-      ),
-      body: _body(),
-      floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            if (isFavorite) {
-              _pokemonViewModel.removeFavoritePokemons(widget.pokemon);
-            } else {
-              _pokemonViewModel.addFavoritePokemons(widget.pokemon);
-            }
-            isFavorite = !isFavorite;
-            setState(() {});
-          },
-          label: isFavorite
-              ? const Icon(
-                  Icons.favorite,
-                  color: Colors.red,
-                )
-              : const Icon(Icons.favorite_outline)),
-    );
+    return CustomBackground(
+        pokemon: widget.pokemon,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor:
+                AppColors.getColorType(widget.pokemon.types.first.type.name),
+            title: Text(widget.pokemon.name.toUpperCase()),
+          ),
+          body: _body(),
+          floatingActionButton: FloatingActionButton.extended(
+              onPressed: () {
+                if (isFavorite) {
+                  _pokemonViewModel.removeFavoritePokemons(widget.pokemon);
+                } else {
+                  _pokemonViewModel.addFavoritePokemons(widget.pokemon);
+                }
+                isFavorite = !isFavorite;
+                setState(() {});
+              },
+              label: isFavorite
+                  ? const Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                    )
+                  : const Icon(Icons.favorite_outline)),
+        ));
   }
 
   Widget _body() {
     final responsive = MediaQuery.of(context).size;
     return Container(
       height: responsive.height,
-      color: _getColorType(),
+      color: AppColors.getColorType(widget.pokemon.types.first.type.name),
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -102,14 +107,19 @@ class _FavPokemonDetailPageState extends State<FavPokemonDetailPage> {
             children: [
               _firstSection(responsive),
               const SizedBox(height: 15),
-              panels(AppLocalizations.of(context)!.stats_title, stats()),
+              Panel(
+                  title: AppLocalizations.of(context)!.stats_title,
+                  child: stats()),
               const SizedBox(height: 15),
               moves(),
               const SizedBox(height: 15),
-              panels(AppLocalizations.of(context)!.sprites_title, sprites()),
+              Panel(
+                  title: AppLocalizations.of(context)!.sprites_title,
+                  child: sprites()),
               const SizedBox(height: 15),
-              panels(
-                  AppLocalizations.of(context)!.abilities_title, abilities()),
+              Panel(
+                  title: AppLocalizations.of(context)!.abilities_title,
+                  child: abilities()),
               const SizedBox(height: 15),
             ],
           ),
@@ -137,8 +147,9 @@ class _FavPokemonDetailPageState extends State<FavPokemonDetailPage> {
         Expanded(
             child: SizedBox(
                 height: responsive.width / 2.3,
-                child: panels(
-                    AppLocalizations.of(context)!.data_title, personalData()))),
+                child: Panel(
+                    title: AppLocalizations.of(context)!.data_title,
+                    child: personalData()))),
       ],
     );
   }
@@ -206,37 +217,6 @@ class _FavPokemonDetailPageState extends State<FavPokemonDetailPage> {
                   style: AppStyles.appTheme.textTheme.bodyMedium,
                 )
               : Container(),
-        ],
-      ),
-    );
-  }
-
-  Widget panels(String titlePanel, Widget child) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade600,
-            spreadRadius: 2,
-            blurRadius: 1,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-              margin: const EdgeInsets.only(left: 8, top: 5),
-              child: Text(
-                titlePanel,
-                style: AppStyles.appTheme.textTheme.titleMedium,
-              )),
-          const SizedBox(height: 5),
-          SizedBox(width: double.infinity, child: child),
-          const SizedBox(height: 5),
         ],
       ),
     );
@@ -339,51 +319,5 @@ class _FavPokemonDetailPageState extends State<FavPokemonDetailPage> {
         ],
       ),
     );
-  }
-
-  Color _getColorType() {
-    switch (widget.pokemon.types.first.type.name) {
-      case "normal":
-        return AppColors.normalColor.withOpacity(0.3);
-      case "fighting":
-        return AppColors.fightingColor.withOpacity(0.3);
-      case "flying":
-        return AppColors.flyingColor.withOpacity(0.3);
-      case "poison":
-        return AppColors.poisonColor.withOpacity(0.3);
-      case "ground":
-        return AppColors.groundColor.withOpacity(0.3);
-      case "rock":
-        return AppColors.rockColor.withOpacity(0.3);
-      case "bug":
-        return AppColors.bugColor.withOpacity(0.3);
-      case "ghost":
-        return AppColors.ghostColor.withOpacity(0.3);
-      case "steel":
-        return AppColors.steelColor.withOpacity(0.3);
-      case "fire":
-        return AppColors.fireColor.withOpacity(0.3);
-      case "water":
-        return AppColors.waterColor.withOpacity(0.3);
-      case "grass":
-        return AppColors.grassColor.withOpacity(0.3);
-      case "electric":
-        return AppColors.electricColor.withOpacity(0.3);
-      case "psychic":
-        return AppColors.psychicColor.withOpacity(0.3);
-      case "ice":
-        return AppColors.iceColor.withOpacity(0.3);
-      case "dragon":
-        return AppColors.dragonColor.withOpacity(0.3);
-      case "dark":
-        return AppColors.darkColor.withOpacity(0.3);
-      case "fairy":
-        return AppColors.fairyColor.withOpacity(0.3);
-      case "unknown":
-        return AppColors.unknownColor.withOpacity(0.3);
-      case "shadow":
-        return AppColors.shadowColor.withOpacity(0.3);
-    }
-    return AppColors.unknownColor.withOpacity(0.3);
   }
 }
